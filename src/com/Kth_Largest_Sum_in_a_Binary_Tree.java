@@ -5,47 +5,60 @@ import java.util.*;
 public class Kth_Largest_Sum_in_a_Binary_Tree {
     public static void main(String[] args) {
 
-        TreeNode root = new TreeNode(897935);
-        root.left = new TreeNode(796748);
-        root.right = new TreeNode(528909);
-//        root.left.left = new TreeNode(2);
-//                root.left.right = new TreeNode(1);
-//                        root.right.left = new TreeNode(3);
-                                root.right.right = new TreeNode(905326);
-                                        root.right.right.left = new TreeNode(706311);
-                                                root.right.right.left.right = new TreeNode(282251);
-        root.right.right.left.right.right = new TreeNode(139169);
+        TreeNode root = new TreeNode(605481);
+        root.right = new TreeNode(87336);
+        root.right.right = new TreeNode(226750);
 
-        System.out.println(kthLargestLevelSum(root, 4));
+
+//        helper(root);
+        System.out.println(kthLargestLevelSum(root, 1));
     }
 
 
     public static long kthLargestLevelSum(TreeNode root, int k) {
 
-        List <Integer> list = new ArrayList<>();
-        list = helper(root, list);
+        return helper(root, k);
 
-        List<Long> ans = new ArrayList<>();
-        int lev = 0;
+    }
 
-        for(int i = 0; i< list.size(); i++){
-            long sum = 0;
-            for(int j = 0; j < Math.pow(2,lev); j++){
-                if (i < list.size()){
-                    sum += list.get(i);
-                    i++;
-                }
-                else{
-                    break;
-                }
+    public static int helper(TreeNode root, int k){
+
+        int level = 1;
+        HashMap<Integer,ArrayList<Integer>> map =  new HashMap<>();
+        map = dfs(root,level,map);
+        ArrayList<Integer> ans = new ArrayList<>();
+        int max = Integer.MIN_VALUE;
+        for (int x : map.keySet()) {
+            ArrayList<Integer> list = map.get(x);
+            int sum = 0;
+            for (int i : list) {
+                sum += i;
             }
-            lev++;
+            if (x > max){
+                max = x;
+            }
             ans.add(sum);
-            i--;
         }
-        Collections.sort(ans);
-        return ans.get(ans.size()-k);
 
+
+        Collections.sort(ans);
+        if (ans.size() >= k){
+            return ans.get(ans.size()-k);
+        }
+        return -1;
+    }
+
+    public static HashMap<Integer,ArrayList<Integer>> dfs (TreeNode node,int level, HashMap<Integer,ArrayList<Integer>> map){
+
+        map.computeIfAbsent(level, value -> new ArrayList<>()).add(node.val);
+        level++;
+        if (node.left != null){
+            dfs(node.left, level, map);
+        }
+        if (node.right != null){
+            dfs(node.right,level,map);
+        }
+        return map;
     }
 
     public static List<Integer> helper (TreeNode root, List<Integer> list){
