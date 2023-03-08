@@ -13,6 +13,19 @@ public class LeetCode_443 {
         System.out.println(compress(ch));
     }
 
+
+
+
+//    public static int compress(char[] chars) {
+//
+//        if (chars.length == 1){
+//            return 1;
+//        }
+//
+//
+//
+//
+//    }
     public static int compress(char[] chars) {
 
         if(chars.length == 1){
@@ -50,9 +63,6 @@ public class LeetCode_443 {
                 length++;
             }
         }
-//        if (chars[chars.length-2] != chars[chars.length-1]){
-//            return length+1;
-//        }
         return length;
 
     }
