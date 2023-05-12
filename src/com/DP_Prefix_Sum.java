@@ -15,7 +15,7 @@ public class DP_Prefix_Sum {
         int [][] ans = new int[arr.length + 1][arr[0].length + 1];
 
         prefixSum(arr,ans);
-        System.out.println(sumRegion(2,1,4,3,ans));
+        System.out.println(sumRegion(4,4,4,4,ans));
 
         for (int[] a :
                 ans) {
@@ -33,10 +33,6 @@ public class DP_Prefix_Sum {
     }
 
     public static int sumRegion(int row1, int col1, int row2, int col2, int [][] ans) {
-        System.out.println(ans[row1][col1]);
-        System.out.println(ans[row2+1][col2+1]);
-        System.out.println(ans[row1+1][col2+1]);
-        System.out.println(ans[row2+1][col1+1]);
         return ans[row1][col1] + ans[row2+1][col2+1] - ans[row1][col2+1] - ans[row2+1][col1];
     }
 }
