@@ -64,10 +64,11 @@ public class Trie {
 
     public static void main(String[] args) {
         String a = "apple";
-        Trie t = new Trie();
+        Words_Data_Structor t = new Words_Data_Structor();
         t.insert(a);
+        t.insert("app");
         System.out.println(t.search(a));
+        System.out.println(t.search("a.."));
         System.out.println(t.search("app"));
-        System.out.println(t.startsWith("app"));
     }
 }

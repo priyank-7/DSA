@@ -12,11 +12,6 @@ public class Words_Data_Structor {
         TrieNode temp = root;
 
         for(char i : word.toCharArray()){
-            if(i == '.'){
-                for(TrieNode j : temp.arr){
-
-                }
-            }
             if(temp.arr[(int)i-97] == null){
                 temp.arr[(int)i-97] = new TrieNode(i);
                 temp = temp.arr[(int)i-97];
@@ -31,14 +26,41 @@ public class Words_Data_Structor {
     public boolean search(String word){
         TrieNode temp = root;
 
-        for(char i : word.toCharArray()){
-            if(temp.arr[(int)i-97] == null){
+        return helper(temp,word,0);
+    }
+
+    public boolean helper(TrieNode temp, String word, int index){
+        char c = word.charAt(index);
+        if(c == '.'){
+            if(index == word.length()-1){
+                for(TrieNode i : temp.arr){
+                    if(i != null && i.flag){
+                        return true;
+                    }
+                }
                 return false;
             }
-            temp = temp.arr[(int)i-97];
+            for(TrieNode i : temp.arr){
+                if (i != null && helper(i,word,index+1)){
+                    return true;
+                }
+            }
         }
-        if(temp.flag){
-            return true;
+        else {
+            if(index == word.length()-1) {
+                if (temp.arr[(int) c - 97] != null) {
+                    if (temp.arr[(int) c - 97].flag) {
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            }
+            else {
+                if (temp.arr[(int) c - 97] != null) {
+                    return helper(temp.arr[(int) c - 97],word,index+1);
+                }
+            }
         }
         return false;
     }
