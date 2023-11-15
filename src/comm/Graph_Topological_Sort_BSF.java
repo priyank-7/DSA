@@ -6,7 +6,6 @@ public class Graph_Topological_Sort_BSF {
     public static void main(String[] args) {
 
     }
-
     public static boolean topological_sort_BSF(int n, int [][] edges){
         HashMap<Integer, ArrayList<Integer>> adjList = new HashMap<>();
         HashMap<Integer,Integer> inDegree = new HashMap<>();
@@ -17,8 +16,6 @@ public class Graph_Topological_Sort_BSF {
         for (int i : adjList.keySet()){
             inDegree.put(i, adjList.get(i).size());
         }
-
-
 //        Push all elements with 0 inDegree
         Queue<Integer> q = new LinkedList<>();
         for (int i : inDegree.keySet()){
@@ -26,13 +23,11 @@ public class Graph_Topological_Sort_BSF {
                 q.add(i);
             }
         }
-
 //        Do bsf
         int count = 0;
         while (!q.isEmpty()){
             int front = q.peek();
             q.remove();
-
             //  Increament count
             count++;
             // neighbour indegree update
@@ -43,12 +38,6 @@ public class Graph_Topological_Sort_BSF {
                 }
             }
         }
-
-        if(count == n){
-            return false;
-        }
-        else{
-            return true;
-        }
+        return count != n;
     }
 }
