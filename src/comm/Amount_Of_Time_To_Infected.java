@@ -1,91 +1,118 @@
 package comm;
 
-import java.util.ArrayList;
-import java.util.List;
-
-class pair_ {
-    int val;
-    int depth;
-    public pair_(){}
-    public pair_(int val, int depth){
-        this.val = val;
-        this.depth = depth;
-    }
-}
+import java.util.*;
+import java.util.function.Function;
 
 public class Amount_Of_Time_To_Infected {
     public static void main(String[] args) {
-//        TreeNode root = new TreeNode(5,new TreeNode(2,new TreeNode(4,new TreeNode(1),null),null),new TreeNode(3));
-        TreeNode root = new TreeNode(1,null,new TreeNode(2,new TreeNode(3,null,new TreeNode(5)),new TreeNode(4)));
-        System.out.println(amountOfTime(root,4));
+        amountOfTime(new TreeNode(1,new TreeNode(2),new TreeNode(3)), 2);
     }
 
-    int cnt = 0;
     public static int amountOfTime(TreeNode root, int start) {
-
-        boolean ck =true;
-
-        List<pair_> left = new ArrayList<>();
-        List<pair_> right = new ArrayList<>();
-
-        left.add(new pair_(root.val, 0));
-        right.add(new pair_(root.val, 0));
-
-        left = helper1(root.left, left, 1);
-        right = helper2(root.right, right, 1);
-
-        int ld = left.get(left.size()-1).depth;
-        int rd = right.get(right.size()-1).depth;
-
-        int dpt = 0;
-        int x = 0;
-        int y = 0;
-
-        if(ck){
-            for(pair_ i : left){
-                if(i.val == start){
-                    dpt = i.depth;
-                    y = ld - dpt;
-                    x = dpt + rd;
-                    ck = false;
-                    break;
-                }
-            }
-        }
-        if(ck){
-            for(pair_ i : right){
-                if(i.val == start){
-                    dpt = i.depth;
-                    y = rd - dpt;
-                    x = dpt + ld;
-                    ck = false;
-                    break;
-                }
-            }
-        }
-
-        return Math.max(y,x);
+        return helper(root, start);
+    }
+    public static int helper(TreeNode root, int start){
+        Map<TreeNode, TreeNode> parent = new HashMap<>();
+        Map<TreeNode, Boolean>  isEffected = new HashMap<>();
+        parent = bfs(root, parent);
+        isEffected = status(root, start, isEffected);
+        TreeNode node = findNode(root, start);
+        return effectionTIme(parent,isEffected, node);
     }
 
-    public static List<pair_> helper1(TreeNode root, List<pair_> left, int depth){
-        if(root == null){
-            return left;
-        }
-        left.add(new pair_(root.val,depth));
-        left = helper1(root.left, left, ++depth);
-        left = helper1(root.right, left, depth);
+    public static Map<TreeNode,TreeNode> bfs (TreeNode root, Map<TreeNode,TreeNode> parent){
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        TreeNode temp = root;
 
-        return left;
+        while(!q.isEmpty()){
+            temp = q.remove();
+            if(temp.left != null){
+                TreeNode finalTemp = temp;
+                parent.computeIfAbsent(temp.left, p -> finalTemp);
+                q.add(temp.left);
+            }
+            if(temp.right != null){
+                TreeNode finalTemp = temp;
+                parent.computeIfAbsent(temp.right, p -> finalTemp);
+                q.add(temp.right);
+            }
+        }
+        return parent;
     }
 
-    public static List<pair_> helper2(TreeNode root, List<pair_> right, int depth){
-        if(root == null){
-            return right;
-        }
-        right.add(new pair_(root.val,depth));
-        right = helper1(root.left, right, ++depth);
-        right = helper1(root.right, right, depth);
+    public static Map<TreeNode, Boolean> status (TreeNode root,int start, Map<TreeNode, Boolean> isEffected){
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        TreeNode temp = root;
 
-        return right;
+        while(!q.isEmpty()){
+            temp = q.remove();
+            if(temp.val != start){
+                isEffected.computeIfAbsent(temp, p -> true);
+            }
+            else{
+                isEffected.computeIfAbsent(temp, p -> false);
+            }
+            if(temp.left != null){
+                q.add(temp.left);
+            }
+            if(temp.right != null){
+                q.add(temp.right);
+            }
+        }
+        return isEffected;
+    }
+
+    public static TreeNode findNode(TreeNode root, int start){
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        TreeNode temp = root;
+
+        while(!q.isEmpty()){
+            temp = q.remove();
+            if(temp.val == start){
+                return temp;
+            }
+            if(temp.left != null){
+                q.add(temp.left);
+            }
+            if(temp.right != null){
+                q.add(temp.right);
+            }
+        }
+        return temp;
+    }
+
+    public static int effectionTIme (Map<TreeNode,TreeNode> parent, Map<TreeNode,Boolean> status, TreeNode node){
+        Queue<TreeNode> q = new LinkedList<>();
+        Queue<TreeNode> tq = new LinkedList<>();
+        q.add(node);
+        TreeNode temp = node;
+        int count = 0;
+
+        while(!q.isEmpty()){
+            while(!q.isEmpty()){
+                temp = q.remove();
+                if(temp.left != null && status.get(temp.left)){
+                    tq.add(temp.left);
+                    status.put(temp.left,false);
+                }
+                if(temp.right != null && status.get(temp.right)){
+                    tq.add(temp.right);
+                    status.put(temp.right,false);
+                }
+                if(parent.get(temp) != null && status.get(parent.get(temp))){
+                    tq.add(parent.get(temp));
+                    status.put(parent.get(temp),false);
+                }
+            }
+            while(!tq.isEmpty()){
+                q.add(tq.remove());
+            }
+            count++;
+        }
+        return count-1;
     }
 }
+
